@@ -3,7 +3,7 @@ import time
 import json
 
 headers = {
-    "Authorization": "Bearer TOKEN",
+    "Authorization": "Bearer ",
     "Content-Type": "application/json"
 }
 BASE_URL = "https://osint.os-surveillance.io/api"
@@ -32,7 +32,7 @@ def add_workspace():
 # Search for data in the workspace
 # pass workspace_id from add_workspace()
 # include latitude, longitude and bounding box of the area
-def search(wokspace_id):
+def search(workspace_id):
     url = BASE_URL + f"/search/"
     payload = {
         "options":
@@ -41,7 +41,7 @@ def search(wokspace_id):
         "date_from": None,
         "date_to": None,
         "only_new": False,
-        "coordinates_id": wokspace_id,
+        "coordinates_id": workspace_id,
         "lat": 40.71846412371451,  # center latitude (Coordinates inside the workspace - example New York Manhattan)
         "lng": -73.99740740984262,  # center longitude
         "ne_lat": 40.74334880686837,  # north east latitude
@@ -53,6 +53,7 @@ def search(wokspace_id):
     response = requests.request("POST", url, headers=headers, json=payload)
 
     search_pk = response.json()['search_pk']
+
 
     return search_pk
 
@@ -95,12 +96,8 @@ while True:
     else:
         time.sleep(1)
 
-print("Results")
-for result in results:
-    print(result.get("type"), None)
-    for item in result['objects']:
-        print(json.dumps(item, indent=4))
-        # print(item['title'])
-        # print(item['timestamp'])
-        # print(item['photo_url'])
-        # print(item['location'])
+# save it as json
+with open('results.json', 'w') as f:
+    json.dump(results, f, indent=4)
+
+print("Results has been saved to results.json")
